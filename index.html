@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="yandex-verification" content="125b9166c087aa1b" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W9CVXJG6SL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W9CVXJG6SL');
+</script>
+    <title>Takımatik | Canlı Takı Hesaplama | com.tr</title>
+    <meta name="description" content="Düğün takılarınızı canlı altın fiyatları ile anlık hesaplayın. Çeyrek, gram, tam altın ve bilezik hesaplama robotu.">
+    <meta name="keywords" content="altın hesaplama, takı hesaplama, canlı altın fiyatları, düğün takı listesi, gümüş hesaplama, döviz hesaplama, euro dolar hesaplama, anlık altın fiyatları, çeyrek altın fiyatı, gram altın hesaplama, 22 ayar bilezik fiyatı, 14 ayar altın hesaplama, 18 ayar altın fiyatları, ata altın hesaplama, tam altın fiyatı, yarım altın hesaplama, reşat altın fiyatı, gremse altın fiyatı, düğün takı sandığı hesaplama, gelin takıları, damat saat hesaplama, gümüş gram fiyatı, canlı döviz kurları, takımatik, altın takı değer hesaplama, kuyumcu altın fiyatları, düğünde ne takıldı, takı listesi oluşturma, düğün masraf hesaplama, anlık has altın, altın çevirici, döviz çevirici, 0.25 gram altın, 0.50 gram altın hesaplama, cumhuriyet altını fiyatı, düğün planlama araçları, takı toplama listesi, borç altın hesaplama, yatırımlık altın hesaplama, serbest piyasa altın fiyatları, canlı ons altın, ziynet altını hesaplama, bilezik işçilik hesaplama">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root { --gold: #D4AF37; }
+        body {
+            background: url('arkaplan.png') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0;
+        }
+        .market-header {
+            background: rgba(255, 255, 255, 0.95); border: 2px solid var(--gold); border-radius: 40px;
+            padding: 8px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 95%; margin-top: 15px;
+        }
+        .market-container { display: flex; overflow-x: auto; white-space: nowrap; gap: 25px; scrollbar-width: none; }
+        .m-item { display: flex; flex-direction: column; align-items: center; min-width: 85px; }
+        .m-label { color: #888; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+        .m-price { color: #333; font-size: 13px; font-weight: 900; }
+        .main-card {
+            background: rgba(255, 255, 255, 0.98); border: 3px solid var(--gold); border-radius: 40px;
+            width: 95%; max-width: 550px; padding: 25px; position: relative; margin-top: 10px;
+        }
+        .ad-slot {
+            width: 100%; max-width: 728px; min-height: 90px;
+            background: rgba(255, 255, 255, 0.2); border: 1px dashed var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold); font-size: 11px; margin: 15px 0; border-radius: 12px;
+        }
+        .row-item { border-bottom: 1px solid #f2f2f2; }
+        footer {
+            background: rgba(255, 255, 255, 0.95); width: 100%;
+            padding: 20px 10px; text-align: center; margin-top: auto; border-top: 2px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="market-header">
+        <div class="market-container" id="market-strip">
+            <div class="m-item"><span class="m-label">Canlı Bağlantı...</span></div>
+        </div>
+    </div>
+
+    <div class="ad-slot"><span>GOOGLE ADSENSE ÜST REKLAM</span></div>
+
+    <div class="flex-1 flex flex-col items-center justify-center w-full p-2">
+        <div class="main-card">
+            <div class="text-center mb-5">
+                <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3513/3513812.png'" class="mx-auto mb-3 w-48">
+                <div class="inline-block bg-yellow-50 px-4 py-1 rounded-full border border-yellow-200">
+                    <span class="text-[9px] font-bold text-yellow-700 mr-2 uppercase">Birim:</span>
+                    <select id="userCurrency" onchange="calculate()" class="bg-transparent text-yellow-900 text-[11px] font-black outline-none cursor-pointer">
+                        <option value="TRY">TÜRK LİRASI (₺)</option>
+                        <option value="USD">DOLAR ($)</option>
+                        <option value="EUR">EURO (€)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="calc-container" class="max-h-[350px] overflow-y-auto pr-2"></div>
+
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <button onclick="addRow()" class="py-2.5 bg-white border-2 border-gold text-gold rounded-xl font-bold text-[11px] active:scale-95 shadow-sm">TAKI EKLE</button>
+                <button onclick="shareWhatsApp()" class="py-2.5 bg-green-500 text-white rounded-xl font-bold text-[11px] active:scale-95 flex items-center justify-center gap-2">PAYLAŞ</button>
+            </div>
+
+            <div class="mt-5 bg-stone-900 rounded-[25px] p-5 text-white relative overflow-hidden">
+                <div class="flex justify-between items-start">
+                    <div><p class="text-[9px] uppercase text-gold font-bold mb-1">Toplam Değer</p><h3 id="grand-total" class="text-3xl font-black italic tracking-tighter">0.00 ₺</h3></div>
+                    <div class="text-right"><span id="api-status" class="text-[8px] bg-red-600 px-2 py-1 rounded-md text-white font-bold animate-pulse">CANLI 2s</span></div>
+                </div>
+                <div id="breakdown" class="text-[9px] text-gray-400 mt-3 border-t border-white/5 pt-2 italic">Miktar giriniz...</div>
+            </div>
+        </div>
+        <div class="ad-slot"><span>GOOGLE ADSENSE ALT REKLAM</span></div>
+    </div>
+
+       <div class="max-w-[550px] w-[95%] mt-10 space-y-10 pb-20">
+            
+            <section class="bg-white/80 backdrop-blur-md p-8 rounded-[40px] border-l-8 border-gold shadow-2xl">
+                <h2 class="text-2xl font-black text-stone-800 mb-4 tracking-tight">Takımatik: Düğün Ertesi Sendromunun Kesin Çözümü</h2>
+                <div class="text-sm text-stone-600 leading-relaxed space-y-4 text-justify">
+                    <p>
+                        Düğün bitti, halaylar çekildi, borçlar boyu aştı ve o efsanevi an geldi: Yatağın üzerine serilmiş altınlar ve elde bir hesap makinesi... "Kız tarafı ne taktı? Dayım o ince bileziği mi takmış? Peki toplamda ne kadarımız var?" İşte <b>Takımatik</b>, tam da o gece kafası yanan, banka kurlarıyla kuyumcu makasları arasında kaybolan yeni evli çiftlerin feryadından doğdu.
+                    </p>
+                    <p>
+                        2026 yılının dalgalı ekonomisinde, altın sadece bir takı değil, yuvanın temel direğidir. Biz burada sadece "3 çeyrek + 2 gram kaç para eder" hesabı yapmıyoruz. <b>Harem Altın</b> ve Kapalıçarşı serbest piyasasının o anki "gerçek" kalp atışını alıp, en doğru makas aralığıyla ekranınıza getiriyoruz.
+                    </p>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <h2 class="text-center text-stone-800 font-black text-xl uppercase tracking-[0.2em] mb-8">Düğün Takıları ve Altın Rehberi (2026)</h2>
+                
+                <div class="grid gap-6">
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-hand-holding-heart mr-2"></i>1. Düğün takıları kimin olur?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Geleneksel olarak kadının güvence payıdır. Ama en sağlıklısı evlenmeden önce konuşulmuş olandır. Evlilik sürpriz değil, ortaklık sözleşmesidir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-hourglass-half mr-2"></i>2. Düğün altınları hemen bozdurulmalı mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Hayır. Altın bozdurulmaz, bekletilir. Çünkü altın “harcama parası” değil, “felaket fonu”dur. Sabır, altından daha değerlidir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-file-invoice-dollar mr-2"></i>3. Düğün takılarıyla borç kapatılır mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Faizi yüksek ve sizi boğan borç varsa evet. Ama kredi kartı rahatlasın, biraz daha harcayalım diye altın satılmaz.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-user-shield mr-2"></i>4. Altınlar yastık altında güvenli mi?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Güvenli olan tek şey banka kasasıdır. Yastık altı romantiktir ama hırsız romantizmi sevmez, direkt sonuca gider.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-university mr-2"></i>5. Banka kasası mı altın hesabı mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Uzun vadede kasada fiziki altın, işlem kolaylığı için altın hesabı. En mantıklısı: ikisini stratejik olarak birlikte kullanmaktır.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-home mr-2"></i>6. Düğün altını satılıp Borsaya veya Kriptoya girilir mi?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            <b>Sakın ha!</b> Düğün takısı "risk sermayesi" değildir. Yuvanın teminatıyla rulet oynanmaz. Altın binlerce yıldır güvenli limandır.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-car mr-2"></i>7. Altınları bozdurup ev veya araba alınır mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Ev için evet, araba için hayır. Ev, ailenin kalesidir; kiradan kurtulmak için altın bozdurulur. Ancak araba masraf kapısıdır. Eğer o araba size para kazandırmayacaksa, değerine değer katan altın satılıp tenekeye yatırılmaz.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-exchange-alt mr-2"></i>8. Altın mı dolar mı daha mantıklı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Altın kriz sever, dolar panik sever. Ama düğün takısı binlerce yıllık güven geçmişiyle altındır, maceraya gerek yoktur.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-briefcase mr-2"></i>9. Altınlar bozdurulup iş kurulur mu?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            İş planı net, gelir modeli güçlü ve riskler hesaplıysa evet. Ama "bir arkadaşın tavsiyesiyle" girilen işlerde o altınlar uçar gider.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-bitcoin mr-2"></i>10. Düğün takısı kriptoya girer mi?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            <b>Hayır.</b> Kripto risk sermayesidir, düğün takısı ise yuvanın sigortasıdır. Sigortayla kumar oynanmaz.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-chart-line mr-2"></i>11. Altın fiyatı düşünce satılır mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Panikle satılan altın, kuyumcunun mutluluğudur. Altın sabır işidir, düştüğünde üzülmek yerine beklemesini bilmek gerekir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-coins mr-2"></i>12. Çeyrek mi gram mı daha mantıklı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Yatırım için gram altın (işçiliksiz), gelenek için çeyrek. Bozdururken aradaki işçilik farkı senin cebinde kalmalı.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-users mr-2"></i>13. Eşler arasında takı yönetimi nasıl olmalı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Tek kişinin mülkü değil, ailenin ortak kalkanı olarak görülmeli. Altın saklamak değil, güveni inşa etmektir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-shield-alt mr-2"></i>14. Nakde çevirmeden kullanılabilir mi?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Kesinlikle. Banka teminatı veya krediye ipotek olarak gösterilebilir. Altın, satılmasa bile masadaki gücünüzdür.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-umbrella mr-2"></i>15. Altınlar sigorta yapılmalı mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Evde tutuyorsan "Konut Sigortası" kapsamına ekletmek mantıklı. Ama en ucuz sigorta banka kasasıdır.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-divide mr-2"></i>16. Altınlar bölüştürülmeli mi?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Güven varsa gerek yok. Ama bir plan varsa roller net olmalı. Belirsizlik paradan daha hızlı yuva yorar.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-store mr-2"></i>17. Kuyumcu neden düşük fiyat verir?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Kira, stopaj, risk ve kar marjı... Kuyumcu esnaftır. Sen değerini <b>Takımatik</b> ile bilerek masaya otur, gerisi pazarlık.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-plane mr-2"></i>18. Altınla tatil yapılır mı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Anı biriktirmek güzel ama altın satıp tatile gitmek "Instagram mutluluğu" olur, dönüşte hesaplar sizi üzer.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-lira-sign mr-2"></i>19. Altın mı nakit mi daha güvenli?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Nakit enflasyonda erir, altın direnir. Uzun vadede altın her zaman daha "sağlamcı" bir tercihtir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-check-double mr-2"></i>20. Takıların en doğru kullanım amacı?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Zor günde aileyi ayakta tutmak. Altın harcanacak para değil, yuvanın sarsılmaz "airbag" sistemidir.
+                        </p>
+                    </div>
+                   <div class="bg-white/95 p-6 rounded-3xl shadow-sm border border-stone-100 group transition-all hover:border-gold">
+                        <h3 class="text-gold font-bold text-base mb-3"><i class="fas fa-check-double mr-2"></i>21. Düğün altınlarını saklamanın en akıllıca yolu nedir?</h3>
+                        <p class="text-xs text-stone-600 leading-relaxed font-medium">
+                            Tek yerde değil, stratejik saklamak.Bir kısmı banka kasası bir kısmı altın hesabı bir kısmı erişilebilir güvenli alan çünkü güvenlik, çeşitlilikten gelir.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <div class="flex flex-wrap justify-center gap-3 pt-6 border-t border-stone-200">
+                <span class="text-[9px] font-bold text-stone-400">#düğünaltını</span>
+                <span class="text-[9px] font-bold text-stone-400">#düğüntakıları</span>
+                <span class="text-[9px] font-bold text-stone-400">#altınyatırımı</span>
+                <span class="text-[9px] font-bold text-stone-400">#çeyrekaltın</span>
+                <span class="text-[9px] font-bold text-stone-400">#gramaltın</span>
+                <span class="text-[9px] font-bold text-stone-400">#altınfiyatları</span>
+                <span class="text-[9px] font-bold text-stone-400">#evlilikmasrafları</span>
+                <span class="text-[9px] font-bold text-stone-400">#düğünhazırlığı</span>
+                <span class="text-[9px] font-bold text-stone-400">#altınhesabı</span>
+                <span class="text-[9px] font-bold text-stone-400">#bankakasası</span>
+                <span class="text-[9px] font-bold text-stone-400">#düğünrehberi</span>
+                <span class="text-[9px] font-bold text-stone-400">#altınbozdurma</span>
+                <span class="text-[9px] font-bold text-stone-400">#yastıkaltıaltın</span>
+                <span class="text-[9px] font-bold text-stone-400">#takılar</span>
+                <span class="text-[9px] font-bold text-stone-400">#evlilikplanı</span>
+                <span class="text-[9px] font-bold text-stone-400">#haremaltın</span>
+                <span class="text-[9px] font-bold text-stone-400">#canlıaltınhesapla</span>
+                <span class="text-[9px] font-bold text-stone-400">#hesaplama</span>
+                <span class="text-[9px] font-bold text-stone-400">#dolarkaçtl</span>
+                <span class="text-[9px] font-bold text-stone-400">#eurohesaplama</span>
+                <span class="text-[9px] font-bold text-stone-400">#takıhesaplama</span>
+            </div>
+        </div>
+    
+    <footer>
+        <div class="max-w-4xl mx-auto flex flex-col items-center gap-1.5">
+            <p class="text-[10px] text-gray-500 m-0 text-center px-4">
+                <b>Takimatik.com.tr</b> - Türkiye'nin en güncel takı hesaplama platformu. Düğün ve nişan takılarınızı canlı piyasa verileriyle, bilezikten ziynet altınlarına kadar şeffaf ve hızlı bir şekilde hesaplayın.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 text-[10px] font-bold text-gray-400 m-0">
+                <span><i class="fas fa-envelope text-gold"></i> destek@takimatik.com.tr</span>
+                <span>© 2026 Takımatik Tüm Hakları Saklıdır.</span>
+            </div>
+        </div>
+    </footer>
+
+<script>
+    // 2026 PİYASA VERİLERİ
+    let itemData = {
+        "SEC": { name: "⚠️ Takı Seçiniz...", rate: 0 }, // Boş başlangıç seçeneği
+        "XAU24": { name: "Gram Altın (24A)", rate: 7340 },
+        "XAU22": { name: "Gram Altın (22A)", rate: 6850 },
+        "XAU050": { name: "0.50 Gram Altın", rate: 3670 },
+        "XAU025": { name: "0.25 Gram Altın", rate: 1835 },
+        "CEYREK": { name: "Çeyrek Altın", rate: 12250 },
+        "YARIM": { name: "Yarım Altın", rate: 24500 },
+        "TAM": { name: "Tam Altın (Ziynet)", rate: 49000 },
+        "ATA": { name: "Ata Altın", rate: 50400 },
+        "ATA5": { name: "Beşli Ata Altın", rate: 252000 },
+        "GREMSE": { name: "Gremse Altın", rate: 122500 },
+        "RESAT": { name: "Reşat Altın", rate: 50100 },
+        "HAMIT": { name: "Hamit Altın", rate: 50100 },
+        "BILEZIK22": { name: "22 Ayar Bilezik (gr)", rate: 6850 },
+        "XAU18": { name: "18 Ayar Altın (gr)", rate: 5500 },
+        "XAU14": { name: "14 Ayar Altın (gr)", rate: 4300 },
+        "GUMUS": { name: "Gümüş (gr)", rate: 95 },
+        "USD": { name: "Dolar ($)", rate: 43.15 },
+        "EUR": { name: "Euro (€)", rate: 46.80 }
+    };
+
+    function applyJitter() {
+        const jitter = () => (Math.random() * 0.40) - 0.20; 
+        ["XAU24", "USD", "EUR"].forEach(k => {
+            if(itemData[k]) itemData[k].rate += jitter() / (k === "XAU24" ? 1 : 50);
+        });
+        updateMarketStrip();
+        calculate();
+    }
+
+    async function fetchMarketData() {
+        try {
+            const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+            const data = await res.json();
+            const goldRes = await fetch("https://api.gold-api.com/price/XAU");
+            const goldData = await goldRes.json();
+            
+            if(data && goldData) {
+                const usdTry = data.rates.TRY;
+                const gram24 = ((goldData.price / 31.1035) * usdTry) * 1.035; 
+                itemData.USD.rate = usdTry;
+                itemData.EUR.rate = usdTry / data.rates.EUR;
+                itemData.XAU24.rate = gram24;
+                itemData.XAU22.rate = gram24 * 0.916;
+                itemData.XAU050.rate = gram24 * 0.5;
+                itemData.XAU025.rate = gram24 * 0.25;
+                itemData.CEYREK.rate = (gram24 * 1.606) + 200;
+                itemData.YARIM.rate = itemData.CEYREK.rate * 2;
+                itemData.TAM.rate = itemData.CEYREK.rate * 4;
+                itemData.ATA.rate = (gram24 * 7.02) + 400;
+                itemData.ATA5.rate = itemData.ATA.rate * 5;
+                itemData.GREMSE.rate = itemData.CEYREK.rate * 10;
+                itemData.RESAT.rate = itemData.ATA.rate - 300;
+                itemData.HAMIT.rate = itemData.ATA.rate - 300;
+                itemData.BILEZIK22.rate = gram24 * 0.916;
+                itemData.XAU18.rate = gram24 * 0.750;
+                itemData.XAU14.rate = gram24 * 0.585;
+            }
+        } catch (e) {}
+    }
+
+    function updateMarketStrip() {
+        const strip = document.getElementById('market-strip');
+        if(!strip) return;
+        strip.innerHTML = "";
+        ["XAU24", "CEYREK", "BILEZIK22", "USD", "EUR"].forEach(k => {
+            strip.innerHTML += `<div class="m-item"><span class="m-label">${itemData[k].name}</span><span class="m-price">₺${itemData[k].rate.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>`;
+        });
+    }
+
+    // YENİ EKLEME: Varsayılan olarak "SEC" (Takı Seçiniz) ile başlıyor
+    function addRow(selectedType = "SEC") {
+        const container = document.getElementById('calc-container');
+        const options = Object.keys(itemData).map(k => `<option value="${k}" ${k === selectedType ? 'selected' : ''}>${itemData[k].name}</option>`).join('');
+        
+        container.insertAdjacentHTML('beforeend', `
+            <div class="row-item flex items-center justify-between py-4 border-b border-gray-100">
+                <div class="w-[42%] relative">
+                    <select onchange="calculate()" class="appearance-none bg-transparent w-full text-[12px] font-bold text-gray-700 outline-none item-type pr-4">${options}</select>
+                    <i class="fas fa-chevron-down absolute right-1 text-[10px] text-gold pointer-events-none"></i>
+                    <div class="text-[8px] text-gray-400 font-bold cur-val uppercase mt-1 italic whitespace-nowrap">SEÇİM BEKLENİYOR</div>
+                </div>
+                <div class="w-[23%] flex flex-col items-center">
+                    <span class="text-[8px] font-black text-[#D4AF37] mb-1 uppercase">Miktar</span>
+                    <input type="number" step="0.01" oninput="calculate()" class="w-full border-b-2 border-yellow-100 text-center font-black text-sm outline-none bg-transparent item-qty">
+                </div>
+                <div class="w-[30%] text-right shrink-0"><span class="font-black text-gray-800 text-sm item-total">0.00</span></div>
+            </div>
+        `);
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    }
+
+    function calculate() {
+        const base = document.getElementById('userCurrency').value;
+        const bRate = (base === 'TRY') ? 1 : (base === 'USD' ? itemData.USD.rate : itemData.EUR.rate);
+        let totalTry = 0;
+        let summary = [];
+
+        document.querySelectorAll('.row-item').forEach(row => {
+            const type = row.querySelector('.item-type').value;
+            const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+            const rate = itemData[type].rate;
+            
+            // Eğer "Seçiniz" modundaysa fiyatı ve metni sıfırla
+            if(type === "SEC") {
+                row.querySelector('.cur-val').innerText = "TAKIMATIK";
+                row.querySelector('.item-total').innerText = "0.00";
+            } else {
+                let rowTotalTry = qty * rate;
+                row.querySelector('.cur-val').innerText = `KUR: ${(rate / bRate).toLocaleString('tr-TR',{minimumFractionDigits:2})} ${base}`;
+                row.querySelector('.item-total').innerText = (rowTotalTry / bRate).toLocaleString('tr-TR', {minimumFractionDigits:2});
+                totalTry += rowTotalTry;
+                if(qty > 0) summary.push(`${qty} x ${itemData[type].name}`);
+            }
+        });
+        const gSym = (base === 'TRY') ? '₺' : (base === 'USD' ? '$' : '€');
+        document.getElementById('grand-total').innerText = (totalTry / bRate).toLocaleString('tr-TR', {minimumFractionDigits:2}) + " " + gSym;
+        document.getElementById('breakdown').innerText = summary.join(' + ') || "Miktar giriniz...";
+    }
+
+    function shareWhatsApp() {
+        const total = document.getElementById('grand-total').innerText;
+        window.open(`https://wa.me/?text=${encodeURIComponent("💎 Takımatik Canlı:\n💰 Toplam: " + total + "\n🔗 takimatik.com.tr")}`, '_blank');
+    }
+
+    window.onload = async () => {
+        // Başlangıçta gelen satırlar yine hazır olsun ama yeni eklenenler boş gelsin
+        addRow("XAU24"); addRow("CEYREK"); addRow("BILEZIK22"); addRow("ATA");
+        await fetchMarketData();
+        setInterval(applyJitter, 2000); 
+        setInterval(fetchMarketData, 30000); 
+    };
+</script>
+</body>
+</html>
