@@ -11,19 +11,21 @@ export default async function handler(req, res) {
         const userMessage = body.message;
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // URL'yi v1 (stabil) sürümüne çektik
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // DİKKAT: Burası en garanti URL formatıdır (v1beta kullanıyoruz)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Sen Takimatik uzmanısın. Kısa ve öz cevap ver: " + userMessage }] }]
+                contents: [{ parts: [{ text: "Sen Takimatik uzmanısın. Kısa cevap ver: " + userMessage }] }]
             })
         });
 
         const data = await response.json();
-        
-        // Google'dan gelen hatayı yakalamak için
+
         if (!response.ok) {
+            // Hata gelirse detayıyla fırlat ki F12'de görelim
             return res.status(response.status).json({ error: data.error });
         }
 
