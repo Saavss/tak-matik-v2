@@ -432,15 +432,14 @@
         });
 
         const data = await response.json();
-
         if (data.error) {
-            throw new Error(data.error);
-        }
-
+    // Burayı değiştiriyoruz:
+    const errorMsg = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
+    throw new Error(errorMsg);
+}
         // Gemini'den gelen cevabı ekrana bas
         const aiResponse = data.candidates[0].content.parts[0].text;
         document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
-        
     } catch (error) {
         console.error("Hata:", error);
         document.getElementById(loadingId).innerHTML = "Bağlantı kurulamadı. Lütfen tekrar deneyin.";
