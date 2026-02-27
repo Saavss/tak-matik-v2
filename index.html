@@ -400,41 +400,72 @@
     </style>
 
     <script>
-        function toggleTakiChat() {
-            const chat = document.getElementById('taki-chat-window');
+    // Pencereyi açıp kapatan fonksiyon
+    function toggleTakiChat() {
+        const chat = document.getElementById('taki-chat-window');
+        if (chat) {
             chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
         }
+    }
 
-        async function askGemini() {
-            const input = document.getElementById('chat-input');
-            const content = document.getElementById('chat-content');
-            const userMsg = input.value.trim();
-            if (!userMsg) return;
+    // Zekayı çalıştıran ana fonksiyon
+    async function askGemini() {
+        const input = document.getElementById('chat-input');
+        const content = document.getElementById('chat-content');
+        
+        if (!input || !content) return;
 
-            content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
-            input.value = "";
-            content.scrollTop = content.scrollHeight;
+        const userMsg = input.value.trim();
+        if (!userMsg) return;
 
-            const loadingId = "loading-" + Date.now();
-            content.innerHTML += `<div class="ai-msg" id="${loadingId}">...</div>`;
+        // Kullanıcı mesajını ekrana bas
+        content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
+        input.value = "";
+        content.scrollTop = content.scrollHeight;
 
-            try {
-                // Vercel /api/chat yoluna bağlanır
-                const response = await fetch("/api/chat.js", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: userMsg })
-                });
-                const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
-                document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
-            } catch (error) {
-                document.getElementById(loadingId).innerHTML = "Hata! /api/chat dosyası bulunamadı veya Vercel ayarı eksik.";
-            }
-            content.scrollTop = content.scrollHeight;
+        // Yükleniyor simgesi ekle
+        const loadingId = "loading-" + Date.now();
+        content.innerHTML += `<div class="ai-msg" id="${loadingId}"><i class="fas fa-circle-notch fa-spin"></i> Analiz ediyorum...</div>`;
+        content.scrollTop = content.scrollHeight;
+
+        try {
+            // Vercel backend'ine (api/chat.js) istek atıyoruz
+            const response = await fetch("/api/chat.js", { 
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ message: userMsg })
+            });
+
+            if (!response.ok) throw new Error('Sunucu hatası');
+
+            const data = await response.json();
+            
+            // Gemini'den gelen metni al
+            const aiResponse = data.candidates[0].content.parts[0].text;
+            
+            // Yanıtı ekrana yazdır (Satır atlamalarını ayarla)
+            document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
+            
+        } catch (error) {
+            console.error("Hata Detayı:", error);
+            document.getElementById(loadingId).innerHTML = "Şu an cevap veremiyorum. Lütfen Vercel ayarlarından API anahtarını kontrol edin.";
         }
-        document.getElementById('chat-input')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') askGemini(); });
-    </script>
+        content.scrollTop = content.scrollHeight;
+    }
+
+    // ENTER tuşuna basınca mesaj gönderilmesi için
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputField = document.getElementById('chat-input');
+        if (inputField) {
+            inputField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') askGemini();
+            });
+        }
+    });
+</script>
 </div>
 </body>
 </html>
