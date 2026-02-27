@@ -1,13 +1,14 @@
+export const config = {
+  api: { bodyParser: true }
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Sadece POST" });
   }
 
   try {
-    const body = typeof req.body === "string"
-      ? JSON.parse(req.body)
-      : req.body;
-
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const message = body?.message || "Merhaba";
 
     if (!process.env.GEMINI_API_KEY) {
@@ -20,23 +21,19 @@ export default async function handler(req, res) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            { parts: [{ text: message }] }
-          ]
+          contents: [{ parts: [{ text: message }] }]
         })
       }
     );
 
     const data = await response.json();
-    console.log("GEMINI:", data);
+    console.log("GEMINI RAW:", data);
 
     if (data.error) {
       return res.status(500).json({ error: data.error.message });
     }
 
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "AI boş cevap verdi";
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "AI boş cevap verdi";
 
     res.status(200).json({ reply });
 
