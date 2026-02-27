@@ -429,15 +429,14 @@
         content.scrollTop = content.scrollHeight;
 
         try {
-            // Vercel backend'ine (api/chat.js) istek atıyoruz
-            const response = await fetch("/api/chat", { 
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify({ message: userMsg })
-            });
+           // index.html içinde bul ve tam olarak bunu yapıştır:
+const response = await fetch("/api/chat", { 
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message: userMsg })
+});
 
             if (!response.ok) throw new Error('Sunucu hatası');
 
