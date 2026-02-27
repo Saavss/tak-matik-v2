@@ -1,25 +1,24 @@
-
 <?php
 // asistan-backend.php
 header('Content-Type: application/json');
 
-// 1. API Anahtarını buraya gizle (Kimse göremez)
-$apiKey = "AIzaSyAYM1CUjNj-uXhsLGEtb6Qfhh-Nwhs5_hs"; 
-$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $apiKey;
-
-// 2. Gelen soruyu al
+// Gelen veriyi oku
 $input = json_decode(file_get_contents('php://input'), true);
 $userMessage = $input['message'] ?? '';
 
 if (!$userMessage) {
-    echo json_encode(['error' => 'Mesaj boş olamaz']);
+    echo json_encode(['error' => 'Mesaj bulunamadı']);
     exit;
 }
 
-// 3. Gemini'ye isteği sunucu üzerinden gönder
+// Senin API Anahtarın
+$apiKey = "AIzaSyAYM1CUjNj-uXhsLGEtb6Qfhh-Nwhs5_hs"; 
+$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $apiKey;
+
+// Gemini'ye gidecek paket
 $data = [
     "contents" => [[
-        "parts" => [["text" => "Sen takimatik.com.tr uzmanısın. Soru: " . $userMessage]]
+        "parts" => [["text" => "Sen takimatik.com.tr sitesinin uzman asistanısın. Türkiye düğün gelenekleri ve altın piyasası hakkında konuşuyorsun. Soru şu: " . $userMessage]]
     ]]
 ];
 
@@ -30,8 +29,13 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 
 $response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
-// 4. Cevabı siteye geri gönder
-echo $response;
+if ($httpCode !== 200) {
+    echo json_encode(['error' => 'API Hatası: ' . $httpCode]);
+} else {
+    echo $response;
+}
 ?>
+
