@@ -359,7 +359,51 @@
         setInterval(applyJitter, 2000); 
         setInterval(fetchMarketData, 30000); 
     };
+    <script>
+// Chat penceresini açıp kapatan fonksiyon
+function toggleTakiChat() {
+    const chat = document.getElementById('taki-chat-window');
+    chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
+}
+
+// YAPIŞTIRMAN GEREKEN KISIM BURASI:
+async function askGemini() {
+    const input = document.getElementById('chat-input');
+    const content = document.getElementById('chat-content');
+    const userMsg = input.value.trim();
     
+    if (!userMsg) return;
+
+    content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
+    input.value = "";
+    
+    const loadingId = "loading-" + Date.now();
+    content.innerHTML += `<div class="ai-msg" id="${loadingId}">Düşünüyorum...</div>`;
+
+    try {
+        // Tarayıcı doğrudan PHP dosyanıza istek atıyor
+        const response = await fetch("asistan-backend.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMsg })
+        });
+
+        const data = await response.json();
+        // Gemini'den gelen cevabı ayıklıyoruz
+        const aiResponse = data.candidates[0].content.parts[0].text;
+
+        document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
+    } catch (error) {
+        document.getElementById(loadingId).innerHTML = "Bağlantı hatası oluştu.";
+    }
+    content.scrollTop = content.scrollHeight;
+}
+
+// Enter tuşuna basınca gönderme özelliği
+document.getElementById('chat-input')?.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') askGemini();
+});
+</script>
 </script>
 </body>
 </html>
