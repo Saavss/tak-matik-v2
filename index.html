@@ -408,52 +408,45 @@
         }
     }
 
-    // Zekayı çalıştıran ana fonksiyon
-    async function askGemini() {
-        const input = document.getElementById('chat-input');
-        const content = document.getElementById('chat-content');
-        
-        if (!input || !content) return;
+   async function askGemini() {
+    const input = document.getElementById('chat-input');
+    const content = document.getElementById('chat-content');
+    const userMsg = input.value.trim();
+    if (!userMsg) return;
 
-        const userMsg = input.value.trim();
-        if (!userMsg) return;
+    content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
+    input.value = "";
+    content.scrollTop = content.scrollHeight;
 
-        // Kullanıcı mesajını ekrana bas
-        content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
-        input.value = "";
-        content.scrollTop = content.scrollHeight;
+    const loadingId = "loading-" + Date.now();
+    content.innerHTML += `<div class="ai-msg" id="${loadingId}"><i class="fas fa-circle-notch fa-spin"></i> Düşünüyorum...</div>`;
 
-        // Yükleniyor simgesi ekle
-        const loadingId = "loading-" + Date.now();
-        content.innerHTML += `<div class="ai-msg" id="${loadingId}"><i class="fas fa-circle-notch fa-spin"></i> Analiz ediyorum...</div>`;
-        content.scrollTop = content.scrollHeight;
+    try {
+        // BURASI ÇOK ÖNEMLİ: Başına nokta koyma, sadece /api/chat
+        const response = await fetch("/api/chat", { 
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userMsg })
+        });
 
-        try {
-           // index.html içinde bul ve tam olarak bunu yapıştır:
-const response = await fetch("/api/chat", { 
-    method: "POST",
-    headers: { 
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message: userMsg })
-});
+        const data = await response.json();
 
-            if (!response.ok) throw new Error('Sunucu hatası');
-
-            const data = await response.json();
-            
-            // Gemini'den gelen metni al
-            const aiResponse = data.candidates[0].content.parts[0].text;
-            
-            // Yanıtı ekrana yazdır (Satır atlamalarını ayarla)
-            document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
-            
-        } catch (error) {
-            console.error("Hata Detayı:", error);
-            document.getElementById(loadingId).innerHTML = "Şu an cevap veremiyorum. Lütfen Vercel ayarlarından API anahtarını kontrol edin.";
+        if (data.error) {
+            throw new Error(data.error);
         }
-        content.scrollTop = content.scrollHeight;
+
+        // Gemini'den gelen cevabı ekrana bas
+        const aiResponse = data.candidates[0].content.parts[0].text;
+        document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
+        
+    } catch (error) {
+        console.error("Hata:", error);
+        document.getElementById(loadingId).innerHTML = "Bağlantı kurulamadı. Lütfen tekrar deneyin.";
     }
+    content.scrollTop = content.scrollHeight;
+}
 
     // ENTER tuşuna basınca mesaj gönderilmesi için
     document.addEventListener('DOMContentLoaded', () => {
