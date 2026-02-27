@@ -12,8 +12,7 @@ export default async function handler(req, res) {
         const apiKey = process.env.GEMINI_API_KEY;
 
         // DİKKAT: Burası en garanti URL formatıdır (v1beta kullanıyoruz)
-       const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
+       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -34,6 +33,7 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "Sunucu hatası: " + err.message });
     }
 }
+
 
 
 
