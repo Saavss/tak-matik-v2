@@ -359,51 +359,90 @@
         setInterval(applyJitter, 2000); 
         setInterval(fetchMarketData, 30000); 
     };
+</script>
+    <div id="taki-asistan-paket">
+
+    <div id="taki-asistan-btn" onclick="toggleTakiChat()" style="position: fixed; bottom: 25px; right: 25px; cursor: pointer; z-index: 9999;">
+        <img id="asistan-img-dosyasi" src="asistan.png" alt="Asistan" style="width: 75px; height: 75px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+    </div>
+
+    <div id="taki-chat-window" style="display: none; position: fixed; bottom: 105px; right: 25px; width: 350px; height: 500px; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 9999; flex-direction: column; font-family: sans-serif; overflow: hidden; border: 1px solid #eee;">
+        
+        <div style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+            <span>✨ Takimatik Akıllı Asistan</span>
+            <button onclick="toggleTakiChat()" style="background:none; border:none; cursor:pointer; font-size:20px; font-weight:bold;">×</button>
+        </div>
+        
+        <div id="chat-content" style="flex: 1; padding: 20px; overflow-y: auto; background: #fff; display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #f1f1f1; padding: 12px; border-radius: 15px 15px 15px 0; max-width: 85%; font-size: 14px; color: #333;">
+                Selam! Ben Takimatik asistanıyım. Altın fiyatları veya takı hesaplamalarıyla ilgili sana nasıl yardımcı olabilirim?
+            </div>
+        </div>
+
+        <div style="padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: #fafafa;">
+            <input type="text" id="chat-input" placeholder="Sorunuzu yazın..." style="flex: 1; border: 1px solid #ddd; border-radius: 25px; padding: 12px 18px; outline: none; font-size: 14px;">
+            <button onclick="askGemini()" style="background: #FFD700; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-weight: bold;">➤</button>
+        </div>
+    </div>
+
+    <style>
+        /* Asistanın zıplama hareketi */
+        @keyframes floatAnim {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        #taki-asistan-btn { animation: floatAnim 3s ease-in-out infinite; }
+        .user-msg { background: #FFD700; color: #000; padding: 12px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; font-size: 14px; }
+        .ai-msg { background: #f1f1f1; color: #333; padding: 12px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 85%; font-size: 14px; line-height: 1.5; }
+    </style>
+
     <script>
-// Chat penceresini açıp kapatan fonksiyon
-function toggleTakiChat() {
-    const chat = document.getElementById('taki-chat-window');
-    chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
-}
+        // Pencereyi aç-kapat
+        function toggleTakiChat() {
+            const chat = document.getElementById('taki-chat-window');
+            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
+        }
 
-// YAPIŞTIRMAN GEREKEN KISIM BURASI:
-async function askGemini() {
-    const input = document.getElementById('chat-input');
-    const content = document.getElementById('chat-content');
-    const userMsg = input.value.trim();
-    
-    if (!userMsg) return;
+        // Zekayı çalıştır (PHP'ye bağlanır)
+        async function askGemini() {
+            const input = document.getElementById('chat-input');
+            const content = document.getElementById('chat-content');
+            const userMsg = input.value.trim();
+            
+            if (!userMsg) return;
 
-    content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
-    input.value = "";
-    
-    const loadingId = "loading-" + Date.now();
-    content.innerHTML += `<div class="ai-msg" id="${loadingId}">Düşünüyorum...</div>`;
+            content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
+            input.value = "";
+            content.scrollTop = content.scrollHeight;
 
-    try {
-        // Tarayıcı doğrudan PHP dosyanıza istek atıyor
-        const response = await fetch("asistan-backend.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMsg })
+            const loadingId = "loading-" + Date.now();
+            content.innerHTML += `<div class="ai-msg" id="${loadingId}">Düşünüyorum...</div>`;
+
+            try {
+                // PHP dosyana veri gönderiyoruz
+                const response = await fetch("asistan-backend.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMsg })
+                });
+
+                const data = await response.json();
+                const aiResponse = data.candidates[0].content.parts[0].text;
+
+                document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
+            } catch (error) {
+                document.getElementById(loadingId).innerHTML = "Şu an cevap veremiyorum, lütfen PHP dosyasını kontrol et.";
+                console.error("Hata:", error);
+            }
+            content.scrollTop = content.scrollHeight;
+        }
+
+        // Enter tuşu desteği
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') askGemini();
         });
-
-        const data = await response.json();
-        // Gemini'den gelen cevabı ayıklıyoruz
-        const aiResponse = data.candidates[0].content.parts[0].text;
-
-        document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
-    } catch (error) {
-        document.getElementById(loadingId).innerHTML = "Bağlantı hatası oluştu.";
-    }
-    content.scrollTop = content.scrollHeight;
-}
-
-// Enter tuşuna basınca gönderme özelliği
-document.getElementById('chat-input')?.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') askGemini();
-});
-</script>
-</script>
+    </script>
+</div>
 </body>
 </html>
