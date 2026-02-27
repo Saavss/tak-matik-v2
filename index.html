@@ -408,43 +408,19 @@
         }
     }
 
-   async function askGemini() {
-    const input = document.getElementById('chat-input');
-    const content = document.getElementById('chat-content');
-    const userMsg = input.value.trim();
-    if (!userMsg) return;
+  async function askGemini(msg) {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ message: msg })
+  });
 
-    content.innerHTML += `<div class="user-msg">${userMsg}</div>`;
-    input.value = "";
-    content.scrollTop = content.scrollHeight;
+  const data = await res.json();
 
-    const loadingId = "loading-" + Date.now();
-    content.innerHTML += `<div class="ai-msg" id="${loadingId}"><i class="fas fa-circle-notch fa-spin"></i> Düşünüyorum...</div>`;
+  if (data.reply) return data.reply;
+  if (data.error) return "AI hata verdi: " + data.error;
 
-    try {
-        // BURASI ÇOK ÖNEMLİ: Başına nokta koyma, sadece /api/chat
-        const response = await fetch("/api/chat", { 
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ message: userMsg })
-        });
-
-        const data = await response.json();
-        if (data.error) {
-    // Burayı değiştiriyoruz:
-    const errorMsg = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
-    throw new Error(errorMsg);
-}
-        // Gemini'den gelen cevabı ekrana bas
-        const aiResponse = data.candidates[0].content.parts[0].text;
-        document.getElementById(loadingId).innerHTML = aiResponse.replace(/\n/g, '<br>');
-    } catch (error) {
-        console.error("Hata:", error);
-        document.getElementById(loadingId).innerHTML = "Bağlantı kurulamadı. Lütfen tekrar deneyin.";
-    }
-    content.scrollTop = content.scrollHeight;
+  return "Cevap alınamadı";
 }
 
     // ENTER tuşuna basınca mesaj gönderilmesi için
